@@ -3,6 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     application
+    jacoco
     checkstyle
     id("io.freefair.lombok") version "8.6"
     id("com.github.ben-manes.versions") version "0.51.0"
@@ -10,7 +11,7 @@ plugins {
 }
 
 application {
-  mainClass.set("org.example.hexlet.HelloWorld")
+    mainClass.set("hexlet.code.App")
 }
 
 group = "hexlet.code"
@@ -44,3 +45,5 @@ tasks.test {
         showStandardStreams = true
     }
 }
+
+tasks.jacocoTestReport { reports { xml.required.set(true) } }

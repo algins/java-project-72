@@ -21,3 +21,6 @@ Site that analyzes pages for SEO suitability.
 $ git clone https://github.com/algins/java-project-72.git && cd java-project-72
 $ make install
 ```
+
+### Demo:
+https://java-project-72-qw44.onrender.com

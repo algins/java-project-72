@@ -10,8 +10,8 @@ clean:
 build:
 	make -C app build
 
-start:
-	make -C app start
+run:
+	make -C app run
 
 install:
 	make -C app install

@@ -10,7 +10,7 @@ clean:
 build:
 	./gradlew clean build
 
-start:
+run:
 	./gradlew run
 
 install:

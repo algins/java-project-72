@@ -13,6 +13,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
+import hexlet.code.controller.MainController;
+import hexlet.code.controller.UrlsController;
 import hexlet.code.repository.BaseRepository;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
@@ -46,7 +48,10 @@ public class App {
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
 
-        app.get("/", ctx ->  ctx.render("index.jte"));
+        app.get("/", MainController::index);
+        app.get("/urls", UrlsController::index);
+        app.get("/urls/{id}", UrlsController::show);
+        app.post("/urls", UrlsController::create);
         return app;
     }
 

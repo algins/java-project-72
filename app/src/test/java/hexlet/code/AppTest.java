@@ -64,6 +64,7 @@ public class AppTest {
             var requestBody = "url=" + url.getName() + "?foo=bar";
             var response = client.post("/urls", requestBody);
             assertThat(response.code()).isEqualTo(200);
+            assertThat(response.body().string()).contains(url.getName());
         });
 
         assertThat(UrlRepository.existsByName(url.getName())).isTrue();

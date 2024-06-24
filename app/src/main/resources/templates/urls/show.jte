@@ -41,7 +41,16 @@
                     <th class="col-2">Дата проверки</th>
                 </thead>
                 <tbody>
-                    
+                    @for(var check : page.getChecks())
+                        <tr>
+                            <td>${check.getId()}</td>
+                            <td>${check.getStatusCode()}</td>
+                            <td>${check.getTitle()}</td>
+                            <td>${check.getH1()}</td>
+                            <td>${check.getDescription()}</td>
+                            <td>${new SimpleDateFormat("dd/MM/yyyy HH:mm").format(check.getCreatedAt())}</td>
+                        </tr>
+                    @endfor
                 </tbody>
             </table>
         </div>

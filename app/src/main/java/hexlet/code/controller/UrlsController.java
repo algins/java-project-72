@@ -6,10 +6,14 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 import hexlet.code.dto.urls.UrlPage;
 import hexlet.code.dto.urls.UrlsPage;
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
+import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 import hexlet.code.util.NamedRoutes;
 import hexlet.code.util.UrlUtils;
@@ -19,7 +23,14 @@ import io.javalin.http.NotFoundResponse;
 public class UrlsController {
     public static void index(Context ctx) throws SQLException {
         var urls = UrlRepository.getEntities();
-        var page = new UrlsPage(urls);
+        var latestUrlChecks = UrlCheckRepository.getLatestEntities();
+        Map<Long, UrlCheck> latestUrlChecksByUrlId = new HashMap<>();
+
+        for (var check : latestUrlChecks) {
+            latestUrlChecksByUrlId.put(check.getUrlId(), check);
+        }
+
+        var page = new UrlsPage(urls, latestUrlChecksByUrlId);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setFlashType(ctx.consumeSessionAttribute("flashType"));
         ctx.render("urls/index.jte", model("page", page));
@@ -31,7 +42,10 @@ public class UrlsController {
         var url = UrlRepository.find(id)
             .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
 
-        var page = new UrlPage(url);
+        var urlChecks = UrlCheckRepository.getEntitiesByUrlId(id);
+        var page = new UrlPage(url, urlChecks);
+        page.setFlash(ctx.consumeSessionAttribute("flash"));
+        page.setFlashType(ctx.consumeSessionAttribute("flashType"));
         ctx.render("urls/show.jte", model("page", page));
     }
 

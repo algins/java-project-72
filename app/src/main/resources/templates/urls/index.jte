@@ -1,4 +1,5 @@
 @import hexlet.code.util.NamedRoutes
+@import java.text.SimpleDateFormat
 @import hexlet.code.dto.urls.UrlsPage
 @param UrlsPage page
 
@@ -19,13 +20,19 @@
                 </thead>
                 <tbody>
                     @for(var url : page.getUrls())
+                        !{var latestCheck = page.getLatestChecksByUrlId().get(url.getId());}
                         <tr>
                             <td>${url.getId()}</td>
                             <td>
                                 <a href="${NamedRoutes.urlPath(url.getId())}">${url.getName()}</a>
                             </td>
-                            <td></td>
-                            <td></td>
+                            @if (latestCheck != null)
+                                <td>${new SimpleDateFormat("dd/MM/yyyy HH:mm").format(latestCheck.getCreatedAt())}</td>
+                                <td>${latestCheck.getStatusCode()}</td>
+                            @else
+                                <td></td>
+                                <td></td>
+                            @endif
                         </tr>
                     @endfor
                 </tbody>

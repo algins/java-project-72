@@ -14,6 +14,7 @@ import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
 import hexlet.code.controller.MainController;
+import hexlet.code.controller.UrlChecksController;
 import hexlet.code.controller.UrlsController;
 import hexlet.code.repository.BaseRepository;
 import io.javalin.Javalin;
@@ -52,6 +53,7 @@ public class App {
         app.get("/urls", UrlsController::index);
         app.get("/urls/{id}", UrlsController::show);
         app.post("/urls", UrlsController::create);
+        app.post("/urls/{id}/checks", UrlChecksController::create);
         return app;
     }
 

@@ -3,6 +3,8 @@ package hexlet.code;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
@@ -10,9 +12,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import hexlet.code.model.Url;
+import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 
 public class AppTest {
     Javalin app;
@@ -92,5 +97,31 @@ public class AppTest {
         });
 
         assertThat(UrlRepository.getEntities()).hasSize(0);
+    }
+
+    @Test
+    public void testCreateUrlCheck() throws SQLException, IOException {
+        var filepath = Paths.get("src", "test", "resources", "test.html");
+        var html = Files.readString(filepath);
+
+        var mockWebServer = new MockWebServer();
+        mockWebServer.enqueue(new MockResponse().setBody(html));
+        mockWebServer.start();
+        url.setName(mockWebServer.url("/").toString());
+        UrlRepository.save(url);
+
+        JavalinTest.test(app, (server, client) -> {
+            var response = client.post("/urls/" + url.getId() + "/checks");
+            assertThat(response.code()).isEqualTo(200);
+
+            var responseBody = response.body().string();
+            assertThat(responseBody).contains("200");
+            assertThat(responseBody).contains("Test HTML Page");
+            assertThat(responseBody).contains("Welcome to Test HTML Page");
+            assertThat(responseBody).contains("This is a test HTML page.");
+        });
+
+        assertThat(UrlCheckRepository.getEntitiesByUrlId(url.getId())).hasSize(1);
+        mockWebServer.shutdown();
     }
 }

@@ -33,10 +33,12 @@ dependencies {
     implementation("io.javalin:javalin-bundle:6.1.6")
     implementation("io.javalin:javalin-rendering:6.1.6")
     implementation("com.konghq:unirest-java:3.14.5")
+    implementation("org.jsoup:jsoup:1.17.2")
 
     testImplementation("org.assertj:assertj-core:3.26.0")
     testImplementation(platform("org.junit:junit-bom:5.11.0-M2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
 
 tasks.test {

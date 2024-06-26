@@ -127,7 +127,7 @@ public class AppTest {
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
+    public final void tearDown() throws IOException {
         mockWebServer.shutdown();
     }
 }

@@ -21,25 +21,31 @@ public class UrlChecksController {
         var url = UrlRepository.find(urlId)
             .orElseThrow(() -> new NotFoundResponse("Entity with id = " + urlId + " not found"));
 
-        var response = Unirest.get(url.getName()).asString();
-        var responseBody = response.getBody();
-        var doc = Jsoup.parse(responseBody);
-        var statusCode = response.getStatus();
-        var title = doc.title();
+        try {
+            var response = Unirest.get(url.getName()).asString();
+            var responseBody = response.getBody();
+            var doc = Jsoup.parse(responseBody);
+            var statusCode = response.getStatus();
+            var title = doc.title();
 
-        var h1 = Optional.ofNullable(doc.selectFirst("h1"))
-            .map(tag -> tag.text())
-            .orElse(null);
+            var h1 = Optional.ofNullable(doc.selectFirst("h1"))
+                .map(tag -> tag.text())
+                .orElse(null);
 
-        var description = Optional.ofNullable(doc.selectFirst("meta[name=description]"))
-            .map(tag -> tag.attr("content"))
-            .orElse(null);
+            var description = Optional.ofNullable(doc.selectFirst("meta[name=description]"))
+                .map(tag -> tag.attr("content"))
+                .orElse(null);
 
-        var createdAt = new Timestamp(System.currentTimeMillis());
-        var urlCheck = new UrlCheck(statusCode, title, h1, description, urlId, createdAt);
-        UrlCheckRepository.save(urlCheck);
-        ctx.sessionAttribute("flash", "Страница успешно проверена");
-        ctx.sessionAttribute("flashType", "success");
+            var createdAt = new Timestamp(System.currentTimeMillis());
+            var urlCheck = new UrlCheck(statusCode, title, h1, description, urlId, createdAt);
+            UrlCheckRepository.save(urlCheck);
+            ctx.sessionAttribute("flash", "Страница успешно проверена");
+            ctx.sessionAttribute("flashType", "success");
+        } catch (RuntimeException e) {
+            ctx.sessionAttribute("flash", "Некорректный адрес");
+            ctx.sessionAttribute("flashType", "danger");
+        }
+
         ctx.redirect(NamedRoutes.urlPath(urlId));
     }
 }

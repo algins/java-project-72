@@ -8,6 +8,6 @@ public class UrlUtils {
     public static String normalizeUrl(String str) throws URISyntaxException, MalformedURLException {
         var uri = new URI(str);
         var url = uri.toURL();
-        return url.getProtocol() + "://" + url.getHost() + (url.getPort() == -1 ? "" : url.getPort());
+        return url.getProtocol() + "://" + url.getHost() + (url.getPort() == -1 ? "" : ":" + url.getPort());
     }
 }

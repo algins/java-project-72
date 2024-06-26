@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,12 +22,15 @@ import okhttp3.mockwebserver.MockWebServer;
 
 public class AppTest {
     Javalin app;
+    MockWebServer mockWebServer;
     Url url;
 
     @BeforeEach
     public final void setUp() throws IOException, SQLException {
         app = App.getApp();
-        url = new Url("https://www.example.com", new Timestamp(System.currentTimeMillis()));
+        mockWebServer = new MockWebServer();
+        mockWebServer.start();
+        url = new Url("https://www.example.com:8080", new Timestamp(System.currentTimeMillis()));
     }
 
     @Test
@@ -104,9 +108,7 @@ public class AppTest {
         var filepath = Paths.get("src", "test", "resources", "test.html");
         var html = Files.readString(filepath);
 
-        var mockWebServer = new MockWebServer();
         mockWebServer.enqueue(new MockResponse().setBody(html));
-        mockWebServer.start();
         url.setName(mockWebServer.url("/").toString());
         UrlRepository.save(url);
 
@@ -122,6 +124,10 @@ public class AppTest {
         });
 
         assertThat(UrlCheckRepository.getEntitiesByUrlId(url.getId())).hasSize(1);
+    }
+
+    @AfterEach
+    public void tearDown() throws IOException {
         mockWebServer.shutdown();
     }
 }
